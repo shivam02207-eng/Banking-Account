@@ -1,0 +1,19 @@
+ **Criteria**                                       Details**                                                             
+
+
+1. Account Class Implementation                     `Account` class with `deposit`, `withdraw`, `display`    
+  
+ 2. User Interface Functionality                       Console menu with `switch`, loops                                       
+  
+  
+ 3. Java Control Structures                             Uses `if`, `else`, `switch`, `for`, `while`  
+    
+ 4. Array and Data Management                            Uses fixed-size array `Account[]`     
+    
+ 5. String Handling and Validation                      Validates account number format and name       
+    
+ 6. Exception and Input Validation                       Handles `NumberFormatException`, validates input types 
+    
+ 7. Code Structure and Modularity                       Separate methods for each operation, utility methods        
+      
+ 8. Code Documentation and Readability              Comments, JavaDoc-style documentation, meaningful variable/method names 

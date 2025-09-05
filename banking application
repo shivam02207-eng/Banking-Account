@@ -1,0 +1,230 @@
+import java.util.Scanner;
+
+/**
+ * Represents a bank account with basic functionality.
+ */
+class Account {
+    private String accountNumber;
+    private String holderName;
+    private double balance;
+
+    /**
+     * Constructs an Account with given values.
+     *
+     * @param accountNumber Account Number (e.g. ACC1234)
+     * @param holderName    Name of the account holder
+     * @param balance       Initial deposit
+     */
+    public Account(String accountNumber, String holderName, double balance) {
+        this.accountNumber = accountNumber;
+        this.holderName = holderName;
+        this.balance = balance;
+    }
+
+    // Getters
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    // Deposit amount
+    public void deposit(double amount) {
+        if (amount <= 0) {
+            System.out.println("❌ Amount must be positive.");
+            return;
+        }
+        balance += amount;
+        System.out.println("✅ Deposited successfully. New balance: $" + balance);
+    }
+
+    // Withdraw amount
+    public void withdraw(double amount) {
+        if (amount <= 0) {
+            System.out.println("❌ Amount must be positive.");
+        } else if (amount > balance) {
+            System.out.println("❌ Insufficient balance.");
+        } else {
+            balance -= amount;
+            System.out.println("✅ Withdrawal successful. New balance: $" + balance);
+        }
+    }
+
+    // Display account info
+    public void display() {
+        System.out.println("📄 Account Information:");
+        System.out.println("Account Number : " + accountNumber);
+        System.out.println("Holder Name    : " + holderName);
+        System.out.println("Balance        : $" + balance);
+    }
+}
+
+/**
+ * Main application for banking operations.
+ */
+public class BankingApp {
+
+    static Scanner scanner = new Scanner(System.in);
+    static final int MAX_ACCOUNTS = 100;
+    static Account[] accounts = new Account[MAX_ACCOUNTS];
+    static int accountCount = 0;
+
+    public static void main(String[] args) {
+        int choice;
+
+        do {
+            showMenu();
+            choice = getIntInput("Enter your choice: ");
+
+            switch (choice) {
+                case 1 -> createAccount();
+                case 2 -> depositToAccount();
+                case 3 -> withdrawFromAccount();
+                case 4 -> displayAccountInfo();
+                case 5 -> System.out.println("👋 Exiting application. Goodbye!");
+                default -> System.out.println("⚠️ Invalid choice. Try again.");
+            }
+
+        } while (choice != 5);
+    }
+
+    /**
+     * Displays the main menu.
+     */
+    public static void showMenu() {
+        System.out.println("\n🏦 Banking System Menu");
+        System.out.println("1. Create New Account");
+        System.out.println("2. Deposit to Account");
+        System.out.println("3. Withdraw from Account");
+        System.out.println("4. Display Account Info");
+        System.out.println("5. Exit");
+    }
+
+    /**
+     * Creates a new account with validated input.
+     */
+    public static void createAccount() {
+        if (accountCount >= MAX_ACCOUNTS) {
+            System.out.println("❌ Cannot create more accounts.");
+            return;
+        }
+
+        String accountNumber = getStringInput("Enter account number (e.g. ACC1234): ");
+        if (!accountNumber.matches("^ACC\\d{4,}$")) {
+            System.out.println("❌ Invalid account number format.");
+            return;
+        }
+
+        if (findAccount(accountNumber) != null) {
+            System.out.println("❌ Account already exists.");
+            return;
+        }
+
+        String name = getStringInput("Enter account holder's name: ");
+        if (!name.matches("^[A-Za-z ]+$")) {
+            System.out.println("❌ Invalid name. Use only letters and spaces.");
+            return;
+        }
+
+        double initialDeposit = getDoubleInput("Enter initial deposit amount: ");
+        if (initialDeposit < 0) {
+            System.out.println("❌ Deposit cannot be negative.");
+            return;
+        }
+
+        accounts[accountCount++] = new Account(accountNumber, name, initialDeposit);
+        System.out.println("✅ Account created successfully.");
+    }
+
+    /**
+     * Deposits money to an existing account.
+     */
+    public static void depositToAccount() {
+        String accountNumber = getStringInput("Enter account number: ");
+        Account acc = findAccount(accountNumber);
+        if (acc == null) {
+            System.out.println("❌ Account not found.");
+            return;
+        }
+
+        double amount = getDoubleInput("Enter deposit amount: ");
+        acc.deposit(amount);
+    }
+
+    /**
+     * Withdraws money from an existing account.
+     */
+    public static void withdrawFromAccount() {
+        String accountNumber = getStringInput("Enter account number: ");
+        Account acc = findAccount(accountNumber);
+        if (acc == null) {
+            System.out.println("❌ Account not found.");
+            return;
+        }
+
+        double amount = getDoubleInput("Enter withdrawal amount: ");
+        acc.withdraw(amount);
+    }
+
+    /**
+     * Displays information of a specific account.
+     */
+    public static void displayAccountInfo() {
+        String accountNumber = getStringInput("Enter account number: ");
+        Account acc = findAccount(accountNumber);
+        if (acc != null) {
+            acc.display();
+        } else {
+            System.out.println("❌ Account not found.");
+        }
+    }
+
+    /**
+     * Finds an account by its number.
+     *
+     * @param accountNumber The account number to find
+     * @return Account object or null if not found
+     */
+    public static Account findAccount(String accountNumber) {
+        for (int i = 0; i < accountCount; i++) {
+            if (accounts[i].getAccountNumber().equalsIgnoreCase(accountNumber)) {
+                return accounts[i];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Safely reads an integer from the user.
+     */
+    public static int getIntInput(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            try {
+                return Integer.parseInt(scanner.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("❌ Please enter a valid number.");
+            }
+        }
+    }
+
+    /**
+     * Safely reads a double from the user.
+     */
+    public static double getDoubleInput(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            try {
+                return Double.parseDouble(scanner.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("❌ Please enter a valid amount.");
+            }
+        }
+    }
+
+    /**
+     * Reads a non-empty string input from the user.
+     */
+    public static String getStringInput(String prompt) {
+        System.out.print(prompt);
+        return scanner.nextLine().trim();
+    }
+}
